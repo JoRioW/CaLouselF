@@ -11,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import model.User;
 
 public class LoginView extends BorderPane{
 	private TextField usernameTF;
@@ -49,7 +48,7 @@ public class LoginView extends BorderPane{
 			
 			String message = UserController.login(user_name, user_password);
 			//debug
-			if(message.equals("Success") == false) {
+			if(message.equals("Success")) {
 				errorLbl.setText(message);
 				System.out.println("User Not Found");
 			}else {
@@ -67,7 +66,7 @@ public class LoginView extends BorderPane{
 		
 		this.stage = stage;
 		
-		Scene scene = new Scene(this, 400, 300);
+		Scene scene = new Scene(this, 500, 500);
 		stage.setScene(scene);
 		stage.setTitle("Login");
 		stage.show();

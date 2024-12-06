@@ -3,8 +3,6 @@ package model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import database.Database;
 
@@ -16,6 +14,7 @@ public class User {
 	private String address;
 	private String roles;
 	private static Database db = Database.getInstance();
+	private static boolean exists = false;
 	
 	public User(int user_id, String username, String password, String phone, String address, String roles) {
 		super();
@@ -93,7 +92,6 @@ public class User {
 			ps.setString(3, phone);
 			ps.setString(4, address);
 			ps.setString(5, roles);
-			//berapa row yg berubah
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -133,7 +131,7 @@ public class User {
 	}
 	
 	public static boolean validateUsername(String username) {
-		boolean exists = false;
+		
 		String query = "SELECT username FROM users WHERE username = ?";
 		PreparedStatement ps = db.preparedStatement(query);
 		
@@ -151,7 +149,6 @@ public class User {
 	}
 	
 	public static boolean getUserByUsernameAndPassword(String username, String password) {
-		boolean exists = false;
 		String query = "SELECT username, password FROM users WHERE username = ? AND password = ?";
 		PreparedStatement ps = db.preparedStatement(query);
 		try {

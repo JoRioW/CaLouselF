@@ -78,9 +78,19 @@ public class RegisterView extends BorderPane {
 			String PhoneNumber = phoneTF.getText();
 			String Address = addressTF.getText();
 			
-			String message = UserController.register(Username, Password, PhoneNumber, Address, roleGroup);
-			errorLbl.setText(message);
-			System.out.println(message);
+			String errorMessage = UserController.checkAccountValidation(Username, Password, PhoneNumber, Address, roleGroup);
+			
+			if (errorMessage.equals("Success")) {
+				RadioButton selectedRole = (RadioButton) roleGroup.getSelectedToggle();
+				String Roles = selectedRole.getText();
+				
+				String Register = UserController.register(Username, Password, PhoneNumber, Address, Roles);
+				errorLbl.setText(Register);
+				System.out.println(Register);
+			}else {
+				errorLbl.setText(errorMessage);
+			}
+			
 		});
 		
 		redirectLbl.setOnMouseClicked(e -> {
