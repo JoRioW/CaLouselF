@@ -49,11 +49,11 @@ public class LoginView extends BorderPane{
 			String message = UserController.login(user_name, user_password);
 			//debug
 			if(message.equals("Success")) {
-				errorLbl.setText(message);
-				System.out.println("User Not Found");
-			}else {
 				System.out.println("User Found");
 				new HomeView(stage);
+			}else {
+				errorLbl.setText(message);
+				System.out.println("User Not Found");
 			}
 		});
 		
@@ -68,7 +68,6 @@ public class LoginView extends BorderPane{
 		
 		Scene scene = new Scene(this, 500, 500);
 		stage.setScene(scene);
-		stage.setTitle("Login");
 		stage.show();
 	}
 }

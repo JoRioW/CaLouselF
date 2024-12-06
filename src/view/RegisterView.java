@@ -85,12 +85,17 @@ public class RegisterView extends BorderPane {
 				String Roles = selectedRole.getText();
 				
 				String Register = UserController.register(Username, Password, PhoneNumber, Address, Roles);
-				errorLbl.setText(Register);
-				System.out.println(Register);
+				
+				if (Register.equals("Success")) {
+					System.out.println(Register);
+					new LoginView(stage);
+				}else {
+					errorLbl.setText(Register);
+					System.out.println(Register);
+				}
 			}else {
 				errorLbl.setText(errorMessage);
 			}
-			
 		});
 		
 		redirectLbl.setOnMouseClicked(e -> {
