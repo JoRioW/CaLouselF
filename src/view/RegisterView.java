@@ -82,9 +82,10 @@ public class RegisterView extends BorderPane {
 			errorLbl.setText(message);
 			System.out.println(message);
 		});
-//		redirectLbl.setOnMouseClicked(e -> {
-//			new LoginView(stage);
-//		});
+		
+		redirectLbl.setOnMouseClicked(e -> {
+			new LoginView(stage);
+		});
 
 	}
 
@@ -92,7 +93,8 @@ public class RegisterView extends BorderPane {
 		init();
 		setLayout();
 		setEvents();
-
+		
+		this.stage = stage;
 		Scene scene = new Scene(this, 500, 500);
 		stage.setScene(scene);
 		stage.show();

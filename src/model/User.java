@@ -104,10 +104,7 @@ public class User {
 	
 	public static User login(
 			String username,
-			String password,
-			String phone,
-			String address,
-			String roles
+			String password
 			)
 	{
 		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -117,7 +114,7 @@ public class User {
 			ps.setString(1, username);
 			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				int id = rs.getInt("user_id");
 				String Username = rs.getString("username");
 				String Password = rs.getString("password");
@@ -125,6 +122,8 @@ public class User {
 				String Address = rs.getString("address");
 				String Roles = rs.getString("role");
 				user = new User(id, Username, Password, PhoneNumber, Address, Roles);
+			}else {
+				return null;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -149,7 +148,24 @@ public class User {
 			e.printStackTrace();
 		}
 		return exists;
-		
+	}
+	
+	public static boolean getUserByUsernameAndPassword(String username, String password) {
+		boolean exists = false;
+		String query = "SELECT username, password FROM users WHERE username = ? AND password = ?";
+		PreparedStatement ps = db.preparedStatement(query);
+		try {
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				exists = true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return exists;
 	}
 	
 }
