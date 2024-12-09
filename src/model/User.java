@@ -3,6 +3,7 @@ package model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import database.Database;
 
@@ -16,6 +17,7 @@ public class User {
 	private static Database db = Database.getInstance();
 	private static boolean exists = false;
 
+	public User() {}
 	public User(String user_id, String username, String password, String phone, String address, String roles) {
 		super();
 		this.user_id = user_id;
@@ -75,30 +77,33 @@ public class User {
 	}
 
 	private static String generateUserId() {
-		String query = "SELECT user_id FROM users ORDER BY user_id DESC";
+		String query = "SELECT user_id FROM users WHERE user_id = ?";
 		PreparedStatement ps = db.preparedStatement(query);
 
+		String randId = null;
+
 		try {
+			randId = "US" + UUID.randomUUID().toString().replace("-", "").substring(0,6);
+			System.out.println(randId);
+			
+			ps.setString(1, randId);
+			
 			ResultSet rs = ps.executeQuery();
 
 			if (!rs.next()) {
-				return "US001";
+				return randId;
 			}
-
-			String lastId = rs.getString("user_id");
-
-			if (!lastId.isEmpty()) {
-				int lastIdToNumber = Integer.parseInt(lastId.substring(3));
-				lastIdToNumber++;
-				return String.format("US%03d", lastIdToNumber);
-			} else {
-				return "US001";
+			
+			String checkId = rs.getString("user_id");
+			
+			if (checkId.equals(randId)) {
+				return generateUserId();
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "US001";
+		return randId;
 
 	}
 
@@ -126,19 +131,24 @@ public class User {
 	public static User login(String username, String password) {
 		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 		PreparedStatement ps = db.preparedStatement(query);
-		User user = null;
+		User user = new User();
 		try {
 			ps.setString(1, username);
 			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				String id = rs.getString("user_id");
+				String Id = rs.getString("user_id");
 				String Username = rs.getString("username");
 				String Password = rs.getString("password");
 				String PhoneNumber = rs.getString("phone_number");
 				String Address = rs.getString("address");
 				String Roles = rs.getString("role");
-				user = new User(id, Username, Password, PhoneNumber, Address, Roles);
+				user.setUser_id(Id);
+				user.setUsername(Username);
+				user.setPassword(Password);
+				user.setPhone(PhoneNumber);
+				user.setAddress(Address);
+				user.setRoles(Roles);
 			} else {
 				return null;
 			}

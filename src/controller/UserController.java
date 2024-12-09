@@ -111,7 +111,7 @@ public class UserController {
 		User user = User.login(username, password);
 
 		if (user != null) {
-			return "Success";
+			return user.getRoles();
 		}
 
 		return "Not Success";

@@ -12,6 +12,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class RegisterView extends BorderPane {
@@ -21,14 +23,16 @@ public class RegisterView extends BorderPane {
 	private Button registerBtn;
 	private RadioButton buyerBtn, sellerBtn;
 	private ToggleGroup roleGroup;
-	private Label roleLbl, errorLbl, redirectLbl;
+	private Label roleLbl, errorLbl, redirectLbl, titleLbl;
 	
 	private Stage stage;
-	private GridPane gp;
+	private GridPane centerGP, topGP;
 
 	private void init() {
-		gp = new GridPane();
+		centerGP = new GridPane();
+		topGP = new GridPane();
 		
+		titleLbl = new Label("Register");
 		usernameTF = new TextField();
 		passwordPF = new PasswordField();
 		phoneTF = new TextField();
@@ -44,8 +48,6 @@ public class RegisterView extends BorderPane {
 		phoneTF.setPromptText("Phone Number");
 		addressTF.setPromptText("Address");
 		
-		errorLbl.setTextFill(Color.RED);
-		
 		buyerBtn.setToggleGroup(roleGroup);
 		sellerBtn.setToggleGroup(roleGroup);
 		
@@ -55,20 +57,29 @@ public class RegisterView extends BorderPane {
 
 	private void setLayout() {
 
-		gp.add(usernameTF, 0, 0);
-		gp.add(passwordPF, 0, 1);
-		gp.add(phoneTF, 0, 2);
-		gp.add(addressTF, 0, 3);
-		gp.add(roleLbl, 0, 4);
-		gp.add(buyerBtn, 0, 5);
-		gp.add(sellerBtn, 1, 5);
-		gp.add(errorLbl, 0, 6);
-		gp.add(registerBtn, 0, 10);
-		gp.add(redirectLbl, 0, 11);
+		centerGP.add(usernameTF, 0, 0);
+		centerGP.add(passwordPF, 0, 1);
+		centerGP.add(phoneTF, 0, 2);
+		centerGP.add(addressTF, 0, 3);
+		centerGP.add(roleLbl, 0, 4);
+		centerGP.add(buyerBtn, 0, 5);
+		centerGP.add(sellerBtn, 1, 5);
+		centerGP.add(errorLbl, 0, 6);
+		centerGP.add(registerBtn, 0, 10);
+		centerGP.add(redirectLbl, 0, 11);
+	
+		topGP.add(titleLbl, 0, 0);
+		this.setTop(topGP);
+		topGP.setAlignment(Pos.CENTER);
 		
-		this.setCenter(gp);
-		gp.setVgap(10);
-		gp.setAlignment(Pos.CENTER);
+		this.setCenter(centerGP);
+		centerGP.setVgap(10);
+		centerGP.setAlignment(Pos.CENTER);
+	}
+	
+	private void setStyle() {
+		titleLbl.setFont(Font.font(null, FontWeight.BOLD ,24));
+		errorLbl.setTextFill(Color.RED);
 	}
 
 	private void setEvents() {
@@ -95,6 +106,7 @@ public class RegisterView extends BorderPane {
 				}
 			}else {
 				errorLbl.setText(errorMessage);
+				System.out.println(errorMessage);
 			}
 		});
 		
@@ -108,6 +120,7 @@ public class RegisterView extends BorderPane {
 		init();
 		setLayout();
 		setEvents();
+		setStyle();
 		
 		this.stage = stage;
 		Scene scene = new Scene(this, 500, 500);
