@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 import database.Database;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Item {
 	private String item_id;
@@ -107,7 +109,6 @@ public class Item {
 
 		try {
 			randId = "IT" + UUID.randomUUID().toString().replace("-", "").substring(0,6);
-			System.out.println(randId);
 			
 			ps.setString(1, randId);
 			
@@ -150,8 +151,8 @@ public class Item {
 		return result;
 	}
 	
-	public static List<Item> viewItem() {
-		List<Item> items = new ArrayList<>();
+	public static ObservableList<Item> viewItem() {
+		ObservableList<Item> items = FXCollections.observableArrayList();
 		String query = "SELECT * FROM items WHERE item_status = ?";
 		PreparedStatement ps = db.preparedStatement(query);
 		

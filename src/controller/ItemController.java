@@ -1,8 +1,5 @@
 package controller;
 
-import java.util.List;
-
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Item;
 
@@ -82,8 +79,7 @@ public class ItemController {
 	}
 	
 	public static ObservableList<Item> viewItem() {
-		List<Item> item = Item.viewItem();
-		ObservableList<Item> items = FXCollections.observableArrayList(item); 
+		ObservableList<Item> items = Item.viewItem(); 
 		
 		if (items != null) {
 			return items;
@@ -100,5 +96,4 @@ public class ItemController {
 		
 		return "Success";
 	}
-
 }
