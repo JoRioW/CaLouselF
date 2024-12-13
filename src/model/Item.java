@@ -151,7 +151,22 @@ public class Item {
 	    }
 	    return result;
 	}
-
+	
+	public static int approveItem(String item_id) {
+		String query = "UPDATE items SET item_status = 'Approve' WHERE item_id = ?";
+		PreparedStatement ps = db.preparedStatement(query);
+		
+		try {
+			ps.setString(1, item_id);
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	public static ObservableList<Item> viewItem(String currentUserId, String currentUserRole) {
 	    ObservableList<Item> items = FXCollections.observableArrayList();
 	    PreparedStatement ps = null;
@@ -161,10 +176,11 @@ public class Item {
 	        String query;
 	        
 	        switch (currentUserRole) {
-	            case "Seller":
-	                query = "SELECT * FROM items WHERE seller_id = ?";
-	                ps = db.preparedStatement(query);
-	                ps.setString(1, currentUserId);
+	        case "Seller":
+                query = "SELECT * FROM items WHERE seller_id = ? AND item_status = ?";
+                ps = db.preparedStatement(query);
+                ps.setString(1, currentUserId);
+                ps.setString(2, "Approve");
 	                break;
 	            
 	            case "Admin":
@@ -174,10 +190,10 @@ public class Item {
 	            
 	            case "Buyer":
 	            default:
-//	                query = "SELECT * FROM items WHERE item_status = ?";
-	            	query = "SELECT * FROM items";
+	                query = "SELECT * FROM items WHERE item_status = ?";
+//	            	query = "SELECT * FROM items";
 	                ps = db.preparedStatement(query);
-//	                ps.setString(1, "Approve");
+	                ps.setString(1, "Approve");
 	                break;
 	        }
 	        

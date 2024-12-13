@@ -78,6 +78,15 @@ public class ItemController {
 		return "Success";
 	}
 	
+	public static String approveItem(String item_id) {
+	    int result = Item.approveItem(item_id);
+	    if (result == 0) {
+	        return "Failed to approve item";
+	    }
+	    return "Item approved successfully";
+	}
+
+	
 	public static ObservableList<Item> viewItem(String currentUserId, String currentUserRole) {
 	    ObservableList<Item> items = Item.viewItem(currentUserId, currentUserRole); 
 	    

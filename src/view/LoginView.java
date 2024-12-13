@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import model.User;
+import view.admin.HomeAdminView;
 import view.buyer.HomeBuyerView;
 import view.seller.HomeSellerView;
 
@@ -81,16 +82,16 @@ public class LoginView extends BorderPane {
             User user = User.login(username, password);
 
             if (user != null) {
-                // Setelah login berhasil, periksa role pengguna
-                String role = user.getRoles(); // Mendapatkan role dari objek User
+                // Setelah login berhasil, periksa role user
+                String role = user.getRoles();
 
                 if (ROLE_SELLER.equals(role)) {
-                    new HomeSellerView(stage, user); // Arahkan ke halaman Seller
+                    new HomeSellerView(stage, user);
                 } else if (ROLE_BUYER.equals(role)) {
-                    new HomeBuyerView(stage, user); // Arahkan ke halaman Buyer
+                    new HomeBuyerView(stage, user);
                 } else if (ROLE_ADMIN.equals(role)) {
                     System.out.println("Admin View under development.");
-                    // new HomeAdminView(stage, user);
+                    new HomeAdminView();
                 }
             } else {
                 errorLbl.setText("Invalid username or password.");
