@@ -61,14 +61,14 @@ public class ItemController {
 	}
 	
 	
-	public static String uploadItem(String item_name, String item_category, String item_size, String item_price) {
-		int result = Item.uploadItem(item_name, item_category, item_size, item_price);
-		if (result == 0) {
-			return "Failed";
-		}
-		
-		return "Success";
-	}
+//	public static String uploadItem(String item_name, String item_category, String item_size, String item_price) {
+//		int result = Item.uploadItem(item_name, item_category, item_size, item_price);
+//		if (result == 0) {
+//			return "Failed";
+//		}
+//		
+//		return "Success";
+//	}
 	
 	public static String deleteItem(String item_id) {
 		int result = Item.deleteItem(item_id);
@@ -78,14 +78,37 @@ public class ItemController {
 		return "Success";
 	}
 	
-	public static ObservableList<Item> viewItem() {
-		ObservableList<Item> items = Item.viewItem(); 
-		
-		if (items != null) {
-			return items;
-		}
-		return null;
+	public static ObservableList<Item> viewItem(String currentUserId, String currentUserRole) {
+	    ObservableList<Item> items = Item.viewItem(currentUserId, currentUserRole); 
+	    
+	    if (items != null) {
+	        return items;
+	    }
+	    return null;
 	}
+
+	public static String uploadItem(String sellerId, String item_name, String item_category, String item_size, String item_price) {
+	    // Validasi item sebelum upload
+	    String validationResult = checkItemValidation(item_name, item_category, item_size, item_price);
+	    int result = Item.uploadItem(sellerId, item_name, item_category, item_size, item_price);
+	    
+	    if (result == 0) {
+	        return "Failed";  // Gagal validasi
+	    }
+	    
+	    return "Success";
+	}
+	
+//	public static ObservableList<Item> viewItem() {
+//		ObservableList<Item> items = Item.viewItem(); 
+//		
+//		if (items != null) {
+//			return items;
+//		}
+//		return null;
+//	}
+	
+	
 	
 	public static String editItem(String item_id, String item_name, String item_category, String item_size, String item_price) {
 		int result = Item.editItem(item_id, item_name, item_category, item_size, item_price);

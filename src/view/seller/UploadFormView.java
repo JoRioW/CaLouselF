@@ -12,12 +12,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import model.User;
 
 public class UploadFormView extends BorderPane{
 	private TextField itemNameTF, itemCategoryTF, itemSizeTF, itemPriceTF;
 	private Label errorLbl, titleLbl;
 	private Button submitBtn, backBtn;
 	
+	private User user;
 	
 	private GridPane centerGP, topGP;
 	private Stage stage;
@@ -65,7 +67,7 @@ public class UploadFormView extends BorderPane{
 
 	private void setEvents() {
 		backBtn.setOnAction(e -> {
-			new HomeSellerView(stage);
+			new HomeSellerView(stage, user);
 		});
 		
 		submitBtn.setOnAction(e -> {
@@ -73,17 +75,19 @@ public class UploadFormView extends BorderPane{
 			String ItemCategory = itemCategoryTF.getText();
 			String ItemSize = itemSizeTF.getText();
 			String ItemPrice = itemPriceTF.getText();
+			String currentUserId = user.getUser_id();
 			
 			String validationMessage = ItemController.checkItemValidation(ItemName, ItemCategory, ItemSize, ItemPrice);
 			
 			if (validationMessage.equals("Success")) {
 				System.out.println(validationMessage);
 				
-				String uploadItemMessage = ItemController.uploadItem(ItemName, ItemCategory, ItemSize, ItemPrice);
+				String uploadItemMessage = ItemController.uploadItem(currentUserId, ItemName, ItemCategory, ItemSize, ItemPrice);
+//				String uploadItemMessage = ItemController.uploadItem(ItemName, ItemCategory, ItemSize, ItemPrice);
 				
 				if (uploadItemMessage.equals("Success")) {
 					System.out.println(uploadItemMessage);
-					new HomeSellerView(stage);
+					new HomeSellerView(stage, user);
 				}else {
 					errorLbl.setText(uploadItemMessage);
 				}
@@ -98,13 +102,14 @@ public class UploadFormView extends BorderPane{
 		errorLbl.setTextFill(Color.RED);
 	}
 
-	public UploadFormView(Stage stage) {
+	public UploadFormView(Stage stage, User user) {
 		init();
 		setLayout();
 		setEvents();
 		setStyle();
 		
 		this.stage = stage;
+		this.user = user;
 		Scene scene = new Scene(this, 500, 500);
 		stage.setScene(scene);
 		stage.show();

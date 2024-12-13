@@ -130,56 +130,137 @@ public class Item {
 		return randId;
 	}
 	
-	public static int uploadItem(String item_name,  String item_category, String item_size, String item_price) {
-		String id = generateItemId();
-		String status = "Pending";
-		String query = "INSERT INTO items(item_id, item_name, item_category, item_size, item_price, item_status) VALUES(?, ?, ?, ?, ?, ?)";
-		PreparedStatement ps = db.preparedStatement(query);
-		
-		try {
-			ps.setString(1, id);
-			ps.setString(2, item_name);
-			ps.setString(3, item_category);
-			ps.setString(4, item_size);
-			ps.setString(5, item_price);
-			ps.setString(6, status);
-			
-			result = ps.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
+	public static int uploadItem(String sellerId, String item_name, String item_category, String item_size, String item_price) {
+	    String id = generateItemId();
+	    String status = "Pending";
+	    String query = "INSERT INTO items(item_id, seller_id, item_name, item_category, item_size, item_price, item_status) VALUES(?, ?, ?, ?, ?, ?, ?)";
+	    PreparedStatement ps = db.preparedStatement(query);
+	    
+	    try {
+	        ps.setString(1, id);
+	        ps.setString(2, sellerId);
+	        ps.setString(3, item_name);
+	        ps.setString(4, item_category);
+	        ps.setString(5, item_size);
+	        ps.setString(6, item_price);
+	        ps.setString(7, status);
+	        
+	        result = ps.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
+	}
+
+	public static ObservableList<Item> viewItem(String currentUserId, String currentUserRole) {
+	    ObservableList<Item> items = FXCollections.observableArrayList();
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
+	    
+	    try {
+	        String query;
+	        
+	        switch (currentUserRole) {
+	            case "Seller":
+	                query = "SELECT * FROM items WHERE seller_id = ?";
+	                ps = db.preparedStatement(query);
+	                ps.setString(1, currentUserId);
+	                break;
+	            
+	            case "Admin":
+	                query = "SELECT * FROM items";
+	                ps = db.preparedStatement(query);
+	                break;
+	            
+	            case "Buyer":
+	            default:
+//	                query = "SELECT * FROM items WHERE item_status = ?";
+	            	query = "SELECT * FROM items";
+	                ps = db.preparedStatement(query);
+//	                ps.setString(1, "Approve");
+	                break;
+	        }
+	        
+	        rs = ps.executeQuery();
+	        
+	        while (rs.next()) {
+	            Item item = new Item(
+	                rs.getString("item_id"),
+	                rs.getString("item_name"),
+	                rs.getString("item_size"),
+	                rs.getString("item_price"),
+	                rs.getString("item_category"),
+	                rs.getString("item_status"),
+	                rs.getString("item_wishlist"),
+	                rs.getString("item_offer_status")
+	            );
+	            items.add(item);
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (ps != null) ps.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    return items;
 	}
 	
-	public static ObservableList<Item> viewItem() {
-		ObservableList<Item> items = FXCollections.observableArrayList();
-		String query = "SELECT * FROM items WHERE item_status = ?";
-		PreparedStatement ps = db.preparedStatement(query);
-		
-		try {
-			ps.setString(1, "Approve");
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Item item = new Item();
-				String itemId = rs.getString("item_id");
-				String itemName = rs.getString("item_name");
-				String itemCategory = rs.getString("item_category");
-				String itemSize = rs.getString("item_size");
-				String itemPrice = rs.getString("item_price");
-				item.setItem_id(itemId);
-				item.setItem_name(itemName);
-				item.setItem_category(itemCategory);
-				item.setItem_size(itemSize);
-				item.setItem_price(itemPrice);
-				items.add(item);
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return items;
-	}
+//	public static int uploadItem(String item_name,  String item_category, String item_size, String item_price) {
+//		String id = generateItemId();
+//		String status = "Pending";
+//		String query = "INSERT INTO items(item_id, item_name, item_category, item_size, item_price, item_status) VALUES(?, ?, ?, ?, ?, ?)";
+//		PreparedStatement ps = db.preparedStatement(query);
+//		
+//		try {
+//			ps.setString(1, id);
+//			ps.setString(2, item_name);
+//			ps.setString(3, item_category);
+//			ps.setString(4, item_size);
+//			ps.setString(5, item_price);
+//			ps.setString(6, status);
+//			
+//			result = ps.executeUpdate();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
+//	
+//	public static ObservableList<Item> viewItem() {
+//		ObservableList<Item> items = FXCollections.observableArrayList();
+//		String query = "SELECT * FROM items WHERE item_status = ?";
+//		PreparedStatement ps = db.preparedStatement(query);
+//		
+//		try {
+//			ps.setString(1, "Approve");
+//			ResultSet rs = ps.executeQuery();
+//			while (rs.next()) {
+//				Item item = new Item();
+//				String itemId = rs.getString("item_id");
+//				String itemName = rs.getString("item_name");
+//				String itemCategory = rs.getString("item_category");
+//				String itemSize = rs.getString("item_size");
+//				String itemPrice = rs.getString("item_price");
+//				item.setItem_id(itemId);
+//				item.setItem_name(itemName);
+//				item.setItem_category(itemCategory);
+//				item.setItem_size(itemSize);
+//				item.setItem_price(itemPrice);
+//				items.add(item);
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return items;
+//	}
 	
 	public static int editItem(String item_id, String item_name, String item_category, String item_size, String item_price) {
 		String query = "UPDATE items SET item_name = ?, item_category = ?, item_size = ?, item_price = ? WHERE item_id = ?";

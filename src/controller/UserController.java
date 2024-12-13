@@ -1,5 +1,6 @@
 package controller;
 
+import Response.LoginResponse;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import model.User;
@@ -42,7 +43,10 @@ public class UserController {
 	}
 
 	private static String checkPhoneNumber(String phone) {
-		if (!phone.startsWith("+62")) {
+		if(phone.isEmpty()) {
+			return message = "Phone Number must be filled";
+		}
+		else if (!phone.startsWith("+62")) {
 			return message = "Phone Number must starts with +62";
 		} else {
 			if (phone.length() != 13) {
@@ -98,23 +102,43 @@ public class UserController {
 		}
 		return "Success";
 	}
+	
+	public static LoginResponse login(String username, String password) {
+	    if (username.isEmpty() || password.isEmpty()) {
+	        return new LoginResponse(false, "All fields must be filled", null);
+	    }
 
-	public static String login(String username, String password) {
-		isExist = User.getUserByUsernameAndPassword(username, password);
+	    boolean isExist = User.getUserByUsernameAndPassword(username, password);
+	    if (!isExist) {
+	        return new LoginResponse(false, "Credentials are incorrect", null);
+	    }
 
-		if (username.isEmpty() && password.isEmpty()) {
-			return "All fields must be filled";
-		} else if (isExist == false) {
-			return "Username or password not match";
-		}
+	    User user = User.login(username, password);
+	    if (user != null) {
+	        return new LoginResponse(true, "Login successful", user.getRoles());
+	    }
 
-		User user = User.login(username, password);
-
-		if (user != null) {
-			return user.getRoles();
-		}
-
-		return "Not Success";
+	    return new LoginResponse(false, "Login failed", null);
 	}
+
+
+	
+//	public static String login(String username, String password) {
+//		isExist = User.getUserByUsernameAndPassword(username, password);
+//
+//		if (username.isEmpty() && password.isEmpty()) {
+//			return "All fields must be filled";
+//		} else if (isExist == false) {
+//			return "Username or password not match";
+//		}
+//
+//		User user = User.login(username, password);
+//
+//		if (user != null) {
+//			return user.getRoles();
+//		}
+//
+//		return "Not Success";
+//	}
 
 }

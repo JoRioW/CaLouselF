@@ -131,7 +131,8 @@ public class User {
 	public static User login(String username, String password) {
 		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 		PreparedStatement ps = db.preparedStatement(query);
-		User user = new User();
+//		User user = new User();
+		User user = null;
 		try {
 			ps.setString(1, username);
 			ps.setString(2, password);
@@ -143,12 +144,13 @@ public class User {
 				String PhoneNumber = rs.getString("phone_number");
 				String Address = rs.getString("address");
 				String Roles = rs.getString("role");
-				user.setUser_id(Id);
-				user.setUsername(Username);
-				user.setPassword(Password);
-				user.setPhone(PhoneNumber);
-				user.setAddress(Address);
-				user.setRoles(Roles);
+				user = new User(Id, Username, Password, PhoneNumber, Address, Roles);
+//				user.setUser_id(Id);
+//				user.setUsername(Username);
+//				user.setPassword(Password);
+//				user.setPhone(PhoneNumber);
+//				user.setAddress(Address);
+//				user.setRoles(Roles);
 			} else {
 				return null;
 			}

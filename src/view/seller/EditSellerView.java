@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import model.Item;
+import model.User;
 import view.LoginView;
 
 public class EditSellerView extends BorderPane{
@@ -27,6 +28,8 @@ public class EditSellerView extends BorderPane{
 	private Label titleLbl, errorLbl;
 	private TextField itemNameTF, itemCategoryTF, itemSizeTF, itemPriceTF;
 	private Button submitBtn, backBtn;
+	
+	private User user;
 	
 	private void init() {
 		centerGP = new GridPane();
@@ -74,7 +77,7 @@ public class EditSellerView extends BorderPane{
 
 	private void setEvents() {
 		backBtn.setOnAction(e -> {
-			new HomeSellerView(stage);
+			new HomeSellerView(stage, user);
 		});
 		
 		submitBtn.setOnAction(e -> {
@@ -91,7 +94,7 @@ public class EditSellerView extends BorderPane{
 				
 				if (editItem.equals("Success")) {
 					System.out.println(editItem);
-					new HomeSellerView(stage);
+					new HomeSellerView(stage, user);
 				}else {
 					errorLbl.setText(editItem);
 				}
@@ -105,9 +108,10 @@ public class EditSellerView extends BorderPane{
 
 	}
 	
-	public EditSellerView(Stage stage, Item item) {
+	public EditSellerView(Stage stage, Item item, User user) {
 		this.stage = stage;
 		this.item = item;
+		this.user = user;
 		
 		init();
 		setLayout();
