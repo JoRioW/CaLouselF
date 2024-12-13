@@ -75,6 +75,10 @@ public class HomeAdminView extends BorderPane {
     }
 	
 	private void setEvents() {
+		table.setOnMouseClicked(e -> {
+            selectedItem = table.getSelectionModel().getSelectedItem();
+        });
+		
 		approveItemBtn.setOnAction(e -> {
 		    if (selectedItem != null) {
 		        String id = selectedItem.getItem_id();
@@ -91,7 +95,20 @@ public class HomeAdminView extends BorderPane {
 		});
 		
 		declineItemBtn.setOnAction(e -> {
-			
+			if(selectedItem != null) {
+				String id = selectedItem.getItem_id();
+				String message = ItemController.deleteItem(id);
+				
+				if("Success".equals(message)) {
+					refreshTable();
+				}
+				else {
+					errorLbl.setText(message);
+				}
+			}
+			else {
+				errorLbl.setText("No item selected to decline.");
+			}
 		});
 		
 		logoutBtn.setOnAction(e -> {
@@ -104,7 +121,9 @@ public class HomeAdminView extends BorderPane {
         table.setItems(items);
     }
 	
-	public HomeAdminView() {
+	public HomeAdminView(Stage stage, User user) {
+		this.stage = stage;
+		this.user = user;
         init();
         setTableLayout();
         setLayout();

@@ -90,8 +90,8 @@ public class LoginView extends BorderPane {
                 } else if (ROLE_BUYER.equals(role)) {
                     new HomeBuyerView(stage, user);
                 } else if (ROLE_ADMIN.equals(role)) {
-                    System.out.println("Admin View under development.");
-                    new HomeAdminView();
+//                    System.out.println("Admin View under development.");
+                    new HomeAdminView(stage, user);
                 }
             } else {
                 errorLbl.setText("Invalid username or password.");
