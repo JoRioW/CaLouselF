@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Item;
 import model.User;
-import model.Wishlist;
 
 public class WishlistView extends BorderPane {
 	
@@ -75,14 +74,14 @@ public class WishlistView extends BorderPane {
         });
         
         removeBtn.setOnAction(e -> {
-        	String message = WishlistController.removeWishlist(selectedItem.get);
+        	String message = WishlistController.removeWishlist();
         });
 
         
     }
 	
 	private void refreshTable() {
-        ObservableList<Wishlist> wishlist = WishlistController.viewWishlist(user.getUser_id());
+        ObservableList<Item> wishlist = WishlistController.viewWishlist(user.getUser_id());
         table.setItems(wishlist);
     }
 	
