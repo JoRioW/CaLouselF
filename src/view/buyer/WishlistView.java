@@ -74,7 +74,7 @@ public class WishlistView extends BorderPane {
         });
         
         removeBtn.setOnAction(e -> {
-        	String message = WishlistController.removeWishlist();
+//        	String message = WishlistController.removeWishlist();
         });
 
         
