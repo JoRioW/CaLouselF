@@ -128,4 +128,14 @@ public class ItemController {
 		
 		return "Success";
 	}
+	
+	public static String updatePurchase(String item_id) {
+		int result = Item.updatePurchase(item_id);
+		
+		if (result == 0) {
+			return "Failed";
+		}
+		
+		return "Success";
+	}
 }

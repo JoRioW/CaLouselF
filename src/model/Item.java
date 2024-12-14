@@ -184,8 +184,9 @@ public class Item {
 	                break;
 	            
 	            case "Admin":
-	                query = "SELECT * FROM items";
+	                query = "SELECT * FROM items WHERE item_status = ?";
 	                ps = db.preparedStatement(query);
+	                ps.setString(1, "Pending");
 	                break;
 	            
 	            case "Buyer":
@@ -305,6 +306,21 @@ public class Item {
 			result = ps.executeUpdate();
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public static int updatePurchase(String item_id) {
+		String query = "UPDATE items SET item_status = 'Purchased' WHERE item_id = ?";
+		PreparedStatement ps = db.preparedStatement(query);
+		
+		try {
+			ps.setString(1, item_id);
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

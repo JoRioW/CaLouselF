@@ -1,7 +1,10 @@
 package view.buyer;
 
 import controller.ItemController;
+import controller.TransactionController;
+import controller.WishlistController;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -25,11 +28,11 @@ public class HomeBuyerView extends BorderPane {
     private ScrollPane tableSP;
     private GridPane topGP;
     private Button viewWishlistBtn, viewHistoryBtn, offerPriceBtn,
-    purchaseItemBtn, addWishlistBtn, removeWishlistBtn, logoutBtn;
+    purchaseItemBtn, addWishlistBtn, logoutBtn;
     private TableColumn<Item, String> name, category, size, price;
     private Item selectedItem;
     private User user;
-    private Stage stage;
+    private Stage stage, popUp;
 
     private void init() {
         table = new TableView<>();
@@ -80,13 +83,28 @@ public class HomeBuyerView extends BorderPane {
         table.setOnMouseClicked(e -> {
             selectedItem = table.getSelectionModel().getSelectedItem();
         });
+        
+        viewWishlistBtn.setOnAction(e -> {
+        	new WishlistView(stage, user);
+        });
 
         addWishlistBtn.setOnAction(e -> {
             if (selectedItem != null) {
-                System.out.println("Item added to wishlist: " + selectedItem.getItem_name());
+                String message = WishlistController.addWishlist(user.getUser_id(), selectedItem.getItem_id());
+                if (message.equals("Success")) {
+                	errorLbl.setText(message);
+                }else {
+                	errorLbl.setText(message);
+                }
             } else {
                 errorLbl.setText("No item selected to add to wishlist.");
             }
+        });
+        
+        purchaseItemBtn.setOnAction(e -> {
+        	if (selectedItem != null) {
+        		popUpAction();
+        	}
         });
 
         logoutBtn.setOnAction(e -> {
@@ -94,6 +112,41 @@ public class HomeBuyerView extends BorderPane {
         	new LoginView(stage);
         });
     }
+
+	private void popUpAction() {
+		popUp = new Stage();
+		popUp.setTitle("Purchase Confirmation");
+		Button purchaseBtn = new Button("Purchase");
+		Button declineBtn = new Button("Decline");
+		GridPane popUpGP = new GridPane();
+		popUpGP.add(purchaseBtn, 0, 0);
+		popUpGP.add(declineBtn, 0, 1);
+		popUpGP.setAlignment(Pos.CENTER);
+		Scene popUpScene = new Scene(popUpGP, 400, 200);
+		
+		popUp.setScene(popUpScene);
+		popUp.show();
+		
+		purchaseBtn.setOnAction(e -> {
+			String message = TransactionController.purchaseItem(user.getUser_id(), selectedItem.getItem_id());
+    		if (message.equals("Success")) {
+    			String updatePurchase = ItemController.updatePurchase(selectedItem.getItem_id());
+    			if (updatePurchase.equals("Success")) {
+    				errorLbl.setText(message);
+    				refreshTable();
+    			}else {
+    				errorLbl.setText(message);
+    			}
+    		}else {
+    			errorLbl.setText(message);
+    		}
+    		popUp.close();
+		});
+		
+		declineBtn.setOnAction(e -> {
+			popUp.close();
+		});
+	}
 
     private void refreshTable() {
         ObservableList<Item> items = ItemController.viewItem(user.getUser_id(), user.getRoles());
