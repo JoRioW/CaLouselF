@@ -24,8 +24,8 @@ public class WishlistController {
 		return "Success";
 	}
 	
-	public static String removeWishlist(String wishlist_id) {
-		int result = Wishlist.removeWishlist(wishlist_id);
+	public static String removeWishlist(String user_id, String item_id) {
+		int result = Wishlist.removeWishlist(user_id, item_id);
 		
 		if (result == 0) {
 			return "Failed";

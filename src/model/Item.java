@@ -297,6 +297,22 @@ public class Item {
 		return result;
 	}
 	
+	public static int offerPriceItem(String item_id, String item_price) {
+		String query = "UPDATE items SET item_price = ? WHERE item_id = ?";
+		PreparedStatement ps = db.preparedStatement(query);
+		
+		try {
+			ps.setString(1, item_price);
+			ps.setString(2, item_id);
+			
+			result = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	public static int deleteItem(String item_id) {
 		String query = "DELETE FROM items WHERE item_id = ?";
 		PreparedStatement ps = db.preparedStatement(query);

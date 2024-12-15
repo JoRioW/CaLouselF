@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.collections.ObservableList;
+import model.Item;
 import model.Transaction;
 
 public class TransactionController {
@@ -11,5 +13,14 @@ public class TransactionController {
 		}
 		
 		return "Success";
+	}
+	
+	public static ObservableList<Transaction> viewPurchaseHistory(String userId) {
+	    ObservableList<Transaction> transactions = Transaction.viewPurchaseHistory(userId); 
+	    
+	    if (transactions != null) {
+	        return transactions;
+	    }
+	    return null;
 	}
 }

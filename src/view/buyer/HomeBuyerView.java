@@ -105,8 +105,24 @@ public class HomeBuyerView extends BorderPane {
         	if (selectedItem != null) {
         		popUpAction();
         	}
+        	else {
+        		errorLbl.setText("No item selected to purchase.");
+        	}
         });
-
+        
+        viewHistoryBtn.setOnAction(e -> {
+        	new PurchaseHistoryView(stage, user);
+        });
+        
+        offerPriceBtn.setOnAction(e -> {
+        	if (selectedItem != null) {
+        		popUpAction();
+        	}
+        	else {
+        		errorLbl.setText("No item selected to offer.");
+        	}
+        });
+        
         logoutBtn.setOnAction(e -> {
         	user = null;
         	new LoginView(stage);

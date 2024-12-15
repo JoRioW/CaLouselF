@@ -117,7 +117,15 @@ public class ItemController {
 //		return null;
 //	}
 	
-	
+	public static String offerPriceItem(String item_id, String item_price) {
+		int result = Item.offerPriceItem(item_id, item_price);
+		
+		if(result == 0) {
+			return "Failed";
+		}
+		
+		return "Success";
+	}
 	
 	public static String editItem(String item_id, String item_name, String item_category, String item_size, String item_price) {
 		int result = Item.editItem(item_id, item_name, item_category, item_size, item_price);

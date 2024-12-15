@@ -44,7 +44,7 @@ public class Wishlist {
 	
 	public static ObservableList<Item> viewWishlist(String user_id) {
 		ObservableList<Item> items = FXCollections.observableArrayList();
-		String query = "SELECT items.item_name, items.item_category, items.item_size, items.item_price FROM wishlist "
+		String query = "SELECT items.item_id, items.item_name, items.item_category, items.item_size, items.item_price FROM wishlist "
 				+ "JOIN items "
 				+ "ON wishlist.item_id = items.item_id "
 				+ "WHERE wishlist.user_id = ? AND items.item_status = 'Approve'";
@@ -55,6 +55,7 @@ public class Wishlist {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
+				item.setItem_id(rs.getString("item_id"));
 	            item.setItem_name(rs.getString("item_name"));
 	            item.setItem_category(rs.getString("item_category"));
 	            item.setItem_size(rs.getString("item_size"));
@@ -115,13 +116,14 @@ public class Wishlist {
 		    return result;
 		}
 		
-		public static int removeWishlist(String wishlist_id) {
-			String query = "DELETE FROM wishlist WHERE wishlist_id = ?";
+		public static int removeWishlist(String user_id, String item_id) {
+			String query = "DELETE FROM wishlist WHERE user_id = ? AND item_id = ?";
 			PreparedStatement ps = db.preparedStatement(query);
 			int result = 0;
 			
 			try {
-				ps.setString(1, wishlist_id);
+				ps.setString(1, user_id);
+				ps.setString(2, item_id);
 				result = ps.executeUpdate();
 				
 			} catch (Exception e) {
