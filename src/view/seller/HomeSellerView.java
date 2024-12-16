@@ -23,7 +23,7 @@ public class HomeSellerView extends BorderPane {
     private static final String SUCCESS = "Success";
 
     private Label errorLbl;
-    private Button uploadItemBtn, updateItemBtn, deleteItemBtn, logoutBtn;
+    private Button uploadItemBtn, updateItemBtn, deleteItemBtn, viewOfferItemBtn, logoutBtn;
     private TableView<Item> table;
     private ScrollPane tableSP;
     private GridPane topGP;
@@ -37,6 +37,7 @@ public class HomeSellerView extends BorderPane {
         uploadItemBtn = new Button("Upload");
         updateItemBtn = new Button("Edit");
         deleteItemBtn = new Button("Delete");
+        viewOfferItemBtn = new Button("View Offer");
         logoutBtn = new Button("Logout");
         tableSP = new ScrollPane(table);
         topGP = new GridPane();
@@ -62,7 +63,8 @@ public class HomeSellerView extends BorderPane {
         topGP.add(uploadItemBtn, 0, 0);
         topGP.add(updateItemBtn, 1, 0);
         topGP.add(deleteItemBtn, 2, 0);
-        topGP.add(logoutBtn, 3, 0);
+        topGP.add(viewOfferItemBtn, 3, 0);
+        topGP.add(logoutBtn, 4, 0);
         topGP.add(errorLbl, 4, 0);
         GridPane.setHalignment(errorLbl, HPos.RIGHT);
         GridPane.setHgrow(errorLbl, Priority.ALWAYS);
@@ -104,6 +106,10 @@ public class HomeSellerView extends BorderPane {
             } else {
                 errorLbl.setText("No item selected to delete.");
             }
+        });
+        
+        viewOfferItemBtn.setOnAction(e -> {
+        	new OfferItemView(stage, user);
         });
         
         logoutBtn.setOnAction(e -> {

@@ -80,7 +80,7 @@ public class HomeBuyerView extends BorderPane {
     }
 
     private void setEvents() {
-        table.setOnMouseClicked(e -> {
+    	table.setOnMouseClicked(e -> {
             selectedItem = table.getSelectionModel().getSelectedItem();
         });
         
@@ -116,7 +116,7 @@ public class HomeBuyerView extends BorderPane {
         
         offerPriceBtn.setOnAction(e -> {
         	if (selectedItem != null) {
-        		popUpAction();
+        		new OfferPriceFormView(stage, user, selectedItem);
         	}
         	else {
         		errorLbl.setText("No item selected to offer.");

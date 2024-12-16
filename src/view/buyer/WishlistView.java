@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Item;
 import model.User;
-import model.Wishlist;
+//import model.Wishlist;
 
 public class WishlistView extends BorderPane {
 	
@@ -27,7 +27,7 @@ public class WishlistView extends BorderPane {
     private TableColumn<Item, String> name, category, size, price;
     private Item selectedItem;
     private User user;
-    private Wishlist wishlist;
+//    private Wishlist wishlist;
     private Stage stage;
 	private Button backBtn, removeBtn;
 	

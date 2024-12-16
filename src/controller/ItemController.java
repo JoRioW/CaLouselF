@@ -108,25 +108,6 @@ public class ItemController {
 	    return "Success";
 	}
 	
-//	public static ObservableList<Item> viewItem() {
-//		ObservableList<Item> items = Item.viewItem(); 
-//		
-//		if (items != null) {
-//			return items;
-//		}
-//		return null;
-//	}
-	
-	public static String offerPriceItem(String item_id, String item_price) {
-		int result = Item.offerPriceItem(item_id, item_price);
-		
-		if(result == 0) {
-			return "Failed";
-		}
-		
-		return "Success";
-	}
-	
 	public static String editItem(String item_id, String item_name, String item_category, String item_size, String item_price) {
 		int result = Item.editItem(item_id, item_name, item_category, item_size, item_price);
 		
@@ -146,4 +127,32 @@ public class ItemController {
 		
 		return "Success";
 	}
+	
+	public static String makeOffer(String item_id, String new_offer_price) {
+	    int result = Item.makeOffer(item_id, new_offer_price);
+	    
+	    switch (result) {
+	        case -1:
+	            return "Offer price must be greater than 0.";
+	        case -2:
+	            return "Offer price must be higher than the current offer.";
+	        case 1:
+	            return "Offer submitted successfully.";
+	        default:
+	            return "Failed to submit offer.";
+	    }
+	}
+	
+	public static String acceptOffer(String item_id, String buyer_id, String offered_price) {
+	    return Item.acceptOffer(item_id, buyer_id, offered_price);
+	}
+
+	public static String declineOffer(String item_id) {
+	    return Item.declineOffer(item_id);
+	}
+
+	public static ObservableList<Item> viewOfferedItems(String seller_id) {
+	    return Item.viewOfferedItems(seller_id);
+	}
+	
 }
