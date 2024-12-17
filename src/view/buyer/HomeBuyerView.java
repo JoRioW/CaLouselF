@@ -172,6 +172,7 @@ public class HomeBuyerView extends BorderPane {
             String message = TransactionController.purchaseItem(user.getUser_id(), selectedItem.getItem_id());
             if (message.equals(SUCCESS)) {
                 String updatePurchase = ItemController.updatePurchase(selectedItem.getItem_id());
+                String removeWishlist = WishlistController.removeWishlist(user.getUser_id(), selectedItem.getItem_id());
                 if (updatePurchase.equals(SUCCESS)) {
                     errorLbl.setText(message);  // Menampilkan pesan sukses
                     refreshTable();  // Refresh tabel setelah pembelian
