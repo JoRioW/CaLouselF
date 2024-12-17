@@ -19,19 +19,28 @@ import model.Item;
 import model.User;
 import view.LoginView;
 
+/*
+ * Kelas HomeSellerView adalah tampilan utama untuk penjual (Seller) setelah login.
+ * Penjual dapat mengunggah item baru, memperbarui item yang sudah ada, menghapus item, melihat tawaran harga dari pembeli, dan keluar dari aplikasi.
+ * Tampilan ini juga menyediakan tabel untuk menampilkan item yang dimiliki oleh penjual.
+ */
 public class HomeSellerView extends BorderPane {
-    private static final String SUCCESS = "Success";
+    private static final String SUCCESS = "Success";  // Constant untuk status sukses
 
-    private Label errorLbl;
-    private Button uploadItemBtn, updateItemBtn, deleteItemBtn, viewOfferItemBtn, logoutBtn;
-    private TableView<Item> table;
-    private ScrollPane tableSP;
-    private GridPane topGP;
-    private TableColumn<Item, String> name, category, size, price;
-    private Item selectedItem;
-    private Stage stage;
-    private User user;
+    private Label errorLbl;  // Label untuk menampilkan pesan error
+    private Button uploadItemBtn, updateItemBtn, deleteItemBtn, viewOfferItemBtn, logoutBtn;  // Tombol untuk berbagai tindakan
+    private TableView<Item> table;  // Tabel untuk menampilkan daftar item
+    private ScrollPane tableSP;  // ScrollPane untuk tabel
+    private GridPane topGP;  // GridPane untuk tata letak tombol
+    private TableColumn<Item, String> name, category, size, price;  // Kolom tabel untuk nama, kategori, ukuran, dan harga
+    private Item selectedItem;  // Item yang dipilih
+    private Stage stage;  // Stage untuk menampilkan tampilan
+    private User user;  // User yang sedang login
 
+    /*
+     * Inisialisasi komponen-komponen UI untuk tampilan Home Seller.
+     * - Membuat tombol, tabel, dan komponen UI lainnya.
+     */
     private void init() {
         table = new TableView<>();
         uploadItemBtn = new Button("Upload");
@@ -45,6 +54,10 @@ public class HomeSellerView extends BorderPane {
         errorLbl.setTextFill(Color.RED);
     }
 
+    /*
+     * Menetapkan layout tabel dengan menambahkan kolom untuk item.
+     * - Kolom yang ditambahkan: nama, kategori, ukuran, dan harga item.
+     */
     private void setTableLayout() {
         name = new TableColumn<>("Item Name");
         name.setCellValueFactory(new PropertyValueFactory<>("item_name"));
@@ -59,6 +72,10 @@ public class HomeSellerView extends BorderPane {
         table.getColumns().addAll(name, category, size, price);
     }
 
+    /*
+     * Menetapkan layout tampilan dengan meletakkan tombol-tombol dan tabel di tempat yang sesuai.
+     * - Tombol untuk mengunggah, memperbarui, menghapus item, melihat tawaran, dan logout.
+     */
     private void setLayout() {
         topGP.add(uploadItemBtn, 0, 0);
         topGP.add(updateItemBtn, 1, 0);
@@ -76,53 +93,70 @@ public class HomeSellerView extends BorderPane {
         this.setCenter(tableSP);
     }
 
+    /*
+     * Menetapkan event handler untuk tombol-tombol.
+     * - Tombol uploadItemBtn: Menampilkan tampilan untuk mengunggah item.
+     * - Tombol updateItemBtn: Menampilkan tampilan untuk mengedit item yang dipilih.
+     * - Tombol deleteItemBtn: Menghapus item yang dipilih.
+     * - Tombol viewOfferItemBtn: Menampilkan tampilan untuk melihat tawaran harga dari pembeli.
+     * - Tombol logoutBtn: Mengarahkan pengguna ke tampilan login.
+     */
     private void setEvents() {
         uploadItemBtn.setOnAction(e -> {
-            new UploadFormView(stage, user);
+            new UploadFormView(stage, user);  // Navigasi ke tampilan Upload Form
         });
 
         table.setOnMouseClicked(e -> {
-            selectedItem = table.getSelectionModel().getSelectedItem();
+            selectedItem = table.getSelectionModel().getSelectedItem();  // Menyimpan item yang dipilih
         });
 
         updateItemBtn.setOnAction(e -> {
             if (selectedItem != null) {
-                new EditSellerView(stage, selectedItem, user);
+                new EditSellerView(stage, selectedItem, user);  // Navigasi ke tampilan Edit Seller
             } else {
-                errorLbl.setText("No item selected to update.");
+                errorLbl.setText("No item selected to update.");  // Pesan error jika tidak ada item yang dipilih
             }
         });
 
         deleteItemBtn.setOnAction(e -> {
             if (selectedItem != null) {
                 String id = selectedItem.getItem_id();
-                String message = ItemController.deleteItem(id);
+                String message = ItemController.deleteItem(id);  // Menghapus item yang dipilih
 
                 if (SUCCESS.equals(message)) {
-                    refreshTable();
+                    refreshTable();  // Menyegarkan tabel jika item berhasil dihapus
                 } else {
-                    errorLbl.setText(message);
+                    errorLbl.setText(message);  // Menampilkan pesan error jika gagal menghapus item
                 }
             } else {
-                errorLbl.setText("No item selected to delete.");
+                errorLbl.setText("No item selected to delete.");  // Pesan error jika tidak ada item yang dipilih
             }
         });
         
         viewOfferItemBtn.setOnAction(e -> {
-        	new OfferItemView(stage, user);
+            new OfferItemView(stage, user);  // Navigasi ke tampilan View Offer Item
         });
         
         logoutBtn.setOnAction(e -> {
-        	user = null;
-        	new LoginView(stage);
+            user = null;
+            new LoginView(stage);  // Navigasi ke tampilan Login setelah logout
         });
     }
 
+    /*
+     * Menyegarkan tabel dengan mengambil data item yang dimiliki oleh seller.
+     * - Data diambil menggunakan controller dan ditampilkan di tabel.
+     */
     private void refreshTable() {
         ObservableList<Item> items = ItemController.viewItem(user.getUser_id(), user.getRoles());
         table.setItems(items);
     }
 
+    /*
+     * Konstruktor utama untuk tampilan HomeSellerView.
+     * - Menginisialisasi tampilan dan memuat data item seller.
+     * - Menampilkan tampilan pada stage.
+     */
     public HomeSellerView(Stage stage, User user) {
         this.user = user;
         this.stage = stage;
@@ -138,3 +172,4 @@ public class HomeSellerView extends BorderPane {
         stage.show();
     }
 }
+

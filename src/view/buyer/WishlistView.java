@@ -16,32 +16,43 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Item;
 import model.User;
-//import model.Wishlist;
 
+/*
+ * Kelas WishlistView menampilkan daftar item yang ada di wishlist pengguna.
+ * Menampilkan tabel yang berisi item yang ditambahkan ke wishlist, termasuk nama item, kategori, ukuran, dan harga.
+ */
 public class WishlistView extends BorderPane {
-	
-	private Label errorLbl;
+
+    // Deklarasi variabel untuk komponen UI
+    private Label errorLbl;
     private TableView<Item> table;
     private ScrollPane tableSP;
     private GridPane topGP;
     private TableColumn<Item, String> name, category, size, price;
     private Item selectedItem;
     private User user;
-//    private Wishlist wishlist;
     private Stage stage;
-	private Button backBtn, removeBtn;
-	
-	private void init() {
-		backBtn = new Button("Back");
-		removeBtn = new Button("Remove");
-		table = new TableView<>();
+    private Button backBtn, removeBtn;
+
+    /*
+     * Inisialisasi komponen UI yang diperlukan untuk tampilan wishlist.
+     * - Membuat tabel wishlist dan tombol untuk navigasi serta menghapus item dari wishlist.
+     */
+    private void init() {
+        backBtn = new Button("Back");
+        removeBtn = new Button("Remove");
+        table = new TableView<>();
         tableSP = new ScrollPane(table);
         topGP = new GridPane();
         errorLbl = new Label();
         errorLbl.setTextFill(Color.RED);
-	}
-	
-	private void setTableLayout() {
+    }
+
+    /*
+     * Menetapkan layout untuk tabel wishlist.
+     * - Menambahkan kolom untuk nama item, kategori, ukuran, dan harga.
+     */
+    private void setTableLayout() {
         name = new TableColumn<>("Item Name");
         name.setCellValueFactory(new PropertyValueFactory<>("item_name"));
         category = new TableColumn<>("Item Category");
@@ -54,10 +65,15 @@ public class WishlistView extends BorderPane {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.getColumns().addAll(name, category, size, price);
     }
-	
-	private void setLayout() {
-		topGP.add(backBtn, 0, 0);
-		topGP.add(removeBtn, 1, 0);
+
+    /*
+     * Menetapkan layout UI untuk tampilan wishlist.
+     * - Menambahkan tombol "Back" dan "Remove" ke bagian atas tampilan.
+     * - Menyusun tabel untuk menampilkan item wishlist.
+     */
+    private void setLayout() {
+        topGP.add(backBtn, 0, 0);
+        topGP.add(removeBtn, 1, 0);
         topGP.add(errorLbl, 0, 2);
         this.setTop(topGP);
 
@@ -65,42 +81,54 @@ public class WishlistView extends BorderPane {
         tableSP.setFitToHeight(true);
         this.setCenter(tableSP);
     }
-	
-	private void setEvents() {
-		backBtn.setOnAction(e -> {
-			new HomeBuyerView(stage, user);
-		});
-		
+
+    /*
+     * Menetapkan event handler untuk tombol-tombol dan interaksi lainnya.
+     * - Tombol "Back" mengarahkan pengguna kembali ke halaman utama pembeli.
+     * - Tombol "Remove" menghapus item yang dipilih dari wishlist.
+     * - Pengguna dapat memilih item dari tabel untuk dihapus.
+     */
+    private void setEvents() {
+        backBtn.setOnAction(e -> {
+            new HomeBuyerView(stage, user);  // Navigasi ke halaman utama pembeli
+        });
+
+        // Ketika tabel di klik, menyimpan item yang dipilih
         table.setOnMouseClicked(e -> {
             selectedItem = table.getSelectionModel().getSelectedItem();
         });
-        
+
+        // Event ketika tombol "Remove" diklik untuk menghapus item dari wishlist
         removeBtn.setOnAction(e -> {
-//        	String message = WishlistController.removeWishlist();
-        	String itemId = selectedItem.getItem_id();
-        	String userId = user.getUser_id();
-        	if (selectedItem != null) {
+            String itemId = selectedItem.getItem_id();
+            String userId = user.getUser_id();
+            if (selectedItem != null) {
                 String message = WishlistController.removeWishlist(userId, itemId);
                 if (message.equals("Success")) {
-                	errorLbl.setText(message);
-                }else {
-                	errorLbl.setText(message);
+                    errorLbl.setText(message);
+                } else {
+                    errorLbl.setText(message);
                 }
             } else {
-                errorLbl.setText("No item selected to add to wishlist.");
+                errorLbl.setText("No item selected to remove from wishlist.");
             }
         });
-
-        
     }
-	
-	private void refreshTable() {
+
+    /*
+     * Memuat ulang tabel wishlist dengan data terbaru.
+     */
+    private void refreshTable() {
         ObservableList<Item> wishlist = WishlistController.viewWishlist(user.getUser_id());
         table.setItems(wishlist);
     }
-	
-	public WishlistView(Stage stage, User user) {
-		this.user = user;
+
+    /*
+     * Konstruktor utama untuk WishlistView.
+     * - Menerima Stage dan User sebagai parameter untuk menginisialisasi tampilan dan memuat data wishlist pengguna.
+     */
+    public WishlistView(Stage stage, User user) {
+        this.user = user;
         this.stage = stage;
 
         init();
@@ -110,8 +138,8 @@ public class WishlistView extends BorderPane {
         refreshTable();
 
         Scene scene = new Scene(this, 600, 600);
-        stage.setScene(scene);
+        stage.setScene(scene);  // Mengatur scene dengan tampilan WishlistView
         stage.show();
-	}
-
+    }
 }
+

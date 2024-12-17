@@ -14,107 +14,131 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import model.User;
 
-public class UploadFormView extends BorderPane{
-	private TextField itemNameTF, itemCategoryTF, itemSizeTF, itemPriceTF;
-	private Label errorLbl, titleLbl;
-	private Button submitBtn, backBtn;
-	
-	private User user;
-	
-	private GridPane centerGP, topGP;
-	private Stage stage;
-	private void init() {
-		topGP = new GridPane();
-		centerGP = new GridPane();
-		
-		backBtn = new Button("Back");
-		titleLbl = new Label("Upload Items");
-		
-		itemNameTF = new TextField();
-		itemCategoryTF = new TextField();
-		itemSizeTF = new TextField();
-		itemPriceTF = new TextField();
-		itemNameTF.setPromptText("Item Name");
-		itemCategoryTF.setPromptText("Item Category");
-		itemSizeTF.setPromptText("Item Size");
-		itemPriceTF.setPromptText("Item Price");
-		
-		errorLbl = new Label();
-		
-		submitBtn = new Button("Submit");
-	}
+/*
+ * Kelas UploadFormView adalah tampilan yang memungkinkan seller untuk mengunggah item baru.
+ * Seller dapat mengisi nama item, kategori, ukuran, dan harga item, kemudian mengirimkan data untuk disimpan.
+ */
+public class UploadFormView extends BorderPane {
+    private TextField itemNameTF, itemCategoryTF, itemSizeTF, itemPriceTF;  // TextField untuk input item
+    private Label errorLbl, titleLbl;  // Label untuk judul dan error
+    private Button submitBtn, backBtn;  // Tombol untuk submit dan kembali
+    
+    private User user;  // Objek user yang sedang login (seller)
+    
+    private GridPane centerGP, topGP;  // GridPane untuk layout
+    private Stage stage;  // Stage untuk menampilkan tampilan
 
-	private void setLayout() {
-		topGP.add(backBtn, 0, 0);
-		topGP.add(titleLbl, 1, 0);
-		
-		
-		centerGP.add(itemNameTF, 0, 0);
-		centerGP.add(itemCategoryTF, 0, 1);
-		centerGP.add(itemSizeTF, 0, 2);
-		centerGP.add(itemPriceTF, 0, 3);
-		centerGP.add(errorLbl, 0, 5);
-		centerGP.add(submitBtn, 0, 7);
-		
-		this.setCenter(centerGP);
-		centerGP.setAlignment(Pos.CENTER);
-		centerGP.setVgap(10);
-		
-		this.setTop(topGP);
-		topGP.setAlignment(Pos.CENTER_LEFT);
-		
-	}
+    /*
+     * Menginisialisasi komponen-komponen UI yang digunakan dalam tampilan ini.
+     */
+    private void init() {
+        topGP = new GridPane();
+        centerGP = new GridPane();
+        
+        backBtn = new Button("Back");
+        titleLbl = new Label("Upload Items");
+        
+        itemNameTF = new TextField();
+        itemCategoryTF = new TextField();
+        itemSizeTF = new TextField();
+        itemPriceTF = new TextField();
+        
+        // Menetapkan placeholder (prompt text) untuk masing-masing field input
+        itemNameTF.setPromptText("Item Name");
+        itemCategoryTF.setPromptText("Item Category");
+        itemSizeTF.setPromptText("Item Size");
+        itemPriceTF.setPromptText("Item Price");
+        
+        errorLbl = new Label();
+        
+        submitBtn = new Button("Submit");
+    }
 
-	private void setEvents() {
-		backBtn.setOnAction(e -> {
-			new HomeSellerView(stage, user);
-		});
-		
-		submitBtn.setOnAction(e -> {
-			String ItemName = itemNameTF.getText();
-			String ItemCategory = itemCategoryTF.getText();
-			String ItemSize = itemSizeTF.getText();
-			String ItemPrice = itemPriceTF.getText();
-			String currentUserId = user.getUser_id();
-			
-			String validationMessage = ItemController.checkItemValidation(ItemName, ItemCategory, ItemSize, ItemPrice);
-			
-			if (validationMessage.equals("Success")) {
-				System.out.println(validationMessage);
-				
-				String uploadItemMessage = ItemController.uploadItem(currentUserId, ItemName, ItemCategory, ItemSize, ItemPrice);
-//				String uploadItemMessage = ItemController.uploadItem(ItemName, ItemCategory, ItemSize, ItemPrice);
-				
-				if (uploadItemMessage.equals("Success")) {
-					System.out.println(uploadItemMessage);
-					new HomeSellerView(stage, user);
-				}else {
-					errorLbl.setText(uploadItemMessage);
-				}
-			}else {
-				errorLbl.setText(validationMessage);
-			}
-		});
-	}
+    /*
+     * Mengatur tata letak komponen UI dalam tampilan ini.
+     * - Memasukkan komponen-komponen ke dalam GridPane.
+     * - Menambahkan elemen-elemen ke dalam top dan center layout.
+     */
+    private void setLayout() {
+        topGP.add(backBtn, 0, 0);
+        topGP.add(titleLbl, 1, 0);
+        
+        centerGP.add(itemNameTF, 0, 0);
+        centerGP.add(itemCategoryTF, 0, 1);
+        centerGP.add(itemSizeTF, 0, 2);
+        centerGP.add(itemPriceTF, 0, 3);
+        centerGP.add(errorLbl, 0, 5);
+        centerGP.add(submitBtn, 0, 7);
+        
+        this.setCenter(centerGP);
+        centerGP.setAlignment(Pos.CENTER);
+        centerGP.setVgap(10);
+        
+        this.setTop(topGP);
+        topGP.setAlignment(Pos.CENTER_LEFT);
+    }
 
-	private void setStyle() {
-		titleLbl.setFont(Font.font(null, FontWeight.BOLD ,24));
-		errorLbl.setTextFill(Color.RED);
-	}
+    /*
+     * Menetapkan event handler untuk tombol-tombol dalam tampilan.
+     * - Tombol backBtn untuk kembali ke tampilan sebelumnya (HomeSellerView).
+     * - Tombol submitBtn untuk mengunggah item setelah validasi data.
+     */
+    private void setEvents() {
+        backBtn.setOnAction(e -> {
+            new HomeSellerView(stage, user);  // Navigasi kembali ke tampilan HomeSellerView
+        });
+        
+        submitBtn.setOnAction(e -> {
+            String ItemName = itemNameTF.getText();
+            String ItemCategory = itemCategoryTF.getText();
+            String ItemSize = itemSizeTF.getText();
+            String ItemPrice = itemPriceTF.getText();
+            String currentUserId = user.getUser_id();
+            
+            // Validasi inputan item
+            String validationMessage = ItemController.checkItemValidation(ItemName, ItemCategory, ItemSize, ItemPrice);
+            
+            if (validationMessage.equals("Success")) {
+                String uploadItemMessage = ItemController.uploadItem(currentUserId, ItemName, ItemCategory, ItemSize, ItemPrice);
+                
+                if (uploadItemMessage.equals("Success")) {
+                    new HomeSellerView(stage, user);  // Setelah sukses, navigasi kembali ke tampilan HomeSellerView
+                } else {
+                    errorLbl.setText(uploadItemMessage);  // Tampilkan pesan error jika gagal upload item
+                }
+            } else {
+                errorLbl.setText(validationMessage);  // Tampilkan pesan error jika validasi gagal
+            }
+        });
+    }
 
-	public UploadFormView(Stage stage, User user) {
-		init();
-		setLayout();
-		setEvents();
-		setStyle();
-		
-		this.stage = stage;
-		this.user = user;
-		Scene scene = new Scene(this, 500, 500);
-		stage.setScene(scene);
-		stage.show();
-	}
+    /*
+     * Menetapkan gaya untuk tampilan ini.
+     * - Menetapkan font untuk titleLbl (judul halaman).
+     * - Menetapkan warna merah untuk label errorLbl.
+     */
+    private void setStyle() {
+        titleLbl.setFont(Font.font(null, FontWeight.BOLD ,24));  // Font untuk titleLbl
+        errorLbl.setTextFill(Color.RED);  // Warna untuk errorLbl
+    }
 
-	
-	
+    /*
+     * Konstruktor untuk kelas UploadFormView.
+     * - Menyiapkan tampilan dan komponen UI.
+     * - Menampilkan tampilan di stage.
+     */
+    public UploadFormView(Stage stage, User user) {
+        init();  // Inisialisasi komponen UI
+        setLayout();  // Menyusun tata letak
+        setEvents();  // Menetapkan event handler untuk tombol
+        setStyle();  // Menetapkan gaya
+
+        this.stage = stage;
+        this.user = user;
+        
+        Scene scene = new Scene(this, 500, 500);
+        stage.setScene(scene);  // Menampilkan tampilan pada stage
+        stage.show();
+    }
 }
+
