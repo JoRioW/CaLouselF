@@ -84,6 +84,8 @@ public class Transaction {
 		this.item_id = item_id;
 	};
 	
+	
+	
 	private static String generateTransactionId() {
 		String query = "SELECT transaction_id FROM transaction WHERE transaction_id = ?";
 		PreparedStatement ps = db.preparedStatement(query);
@@ -114,10 +116,10 @@ public class Transaction {
 	
 	public static ObservableList<Transaction> viewPurchaseHistory(String user_id) {
 	    ObservableList<Transaction> transactions = FXCollections.observableArrayList();
-	    String query = "SELECT t.transaction_id, items.item_name, items.item_category, items.item_size, items.item_price " +
-	                   "FROM transaction t " +
-	                   "JOIN items ON t.item_id = items.item_id " +
-	                   "WHERE t.user_id = ?";
+	    String query = "SELECT transaction.transaction_id, items.item_name, items.item_category, items.item_size, items.item_price " +
+	                   "FROM transaction " +
+	                   "JOIN items ON transaction.item_id = items.item_id " +
+	                   "WHERE transaction.user_id = ?";
 	    PreparedStatement ps = db.preparedStatement(query);
 	    try {
 	        ps.setString(1, user_id);

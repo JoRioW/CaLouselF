@@ -75,16 +75,12 @@ public class OfferItemView extends BorderPane {
         acceptBtn.setOnAction(e -> {
             Item selectedItem = table.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
-                // Panggil purchaseItem untuk membuat transaksi
-                String message = TransactionController.purchaseItem(user.getUser_id(), selectedItem.getItem_id());
-
-                if (message.equals("Success")) {
                     // Setelah transaksi berhasil, perbarui status item menjadi "Purchased"
                     String updatePurchase = ItemController.updatePurchase(selectedItem.getItem_id());
                     
                     if (updatePurchase.equals("Success")) {
                         // Pembelian sukses, ubah status item dan buat transaksi
-                        String acceptOfferResponse = ItemController.acceptOffer(selectedItem.getItem_id(), user.getUser_id(), selectedItem.getItem_price());
+                        String acceptOfferResponse = ItemController.acceptOffer(selectedItem.getItem_id(), selectedItem.getOffered_price());
 
                         if (acceptOfferResponse.equals("Offer accepted, transaction created.")) {
                             errorLbl.setText("Offer accepted and transaction created successfully.");
@@ -95,9 +91,7 @@ public class OfferItemView extends BorderPane {
                     } else {
                         errorLbl.setText("Error updating item status to Purchased.");
                     }
-                } else {
-                    errorLbl.setText("Error in processing the purchase: " + message);
-                }
+                
             } else {
                 errorLbl.setText("Please select an offer to accept.");
             }

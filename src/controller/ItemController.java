@@ -128,8 +128,8 @@ public class ItemController {
 		return "Success";
 	}
 	
-	public static String makeOffer(String item_id, String new_offer_price) {
-	    int result = Item.makeOffer(item_id, new_offer_price);
+	public static String makeOffer(String item_id, String buyer_id, String new_offer_price) {
+	    int result = Item.makeOffer(item_id, buyer_id, new_offer_price);
 	    
 	    switch (result) {
 	        case -1:
@@ -143,8 +143,8 @@ public class ItemController {
 	    }
 	}
 	
-	public static String acceptOffer(String item_id, String buyer_id, String offered_price) {
-	    return Item.acceptOffer(item_id, buyer_id, offered_price);
+	public static String acceptOffer(String item_id, String offered_price) {
+	    return Item.acceptOffer(item_id, offered_price);
 	}
 
 	public static String declineOffer(String item_id) {

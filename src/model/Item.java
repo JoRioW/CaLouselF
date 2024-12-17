@@ -27,7 +27,7 @@ public class Item {
 	public Item() {};
 	
 	public Item(String item_id, String item_name, String item_size, String item_price, String item_category,
-			String item_status, String item_wishlist, String item_offer_status) {
+			String item_status, String item_wishlist, String item_offer_status, String offered_price) {
 		super();
 		this.item_id = item_id;
 		this.item_name = item_name;
@@ -37,6 +37,7 @@ public class Item {
 		this.item_status = item_status;
 		this.item_wishlist = item_wishlist;
 		this.item_offer_status = item_offer_status;
+		this.offered_price = offered_price;
 	}
 
 	public String getItem_id() {
@@ -218,7 +219,8 @@ public class Item {
 	                rs.getString("item_category"),
 	                rs.getString("item_status"),
 	                rs.getString("item_wishlist"),
-	                rs.getString("item_offer_status")
+	                rs.getString("item_offer_status"),
+	                rs.getString("offered_price")
 	            );
 	            items.add(item);
 	        }
@@ -352,31 +354,37 @@ public class Item {
 		return result;
 	}
 	
-	public static String acceptOffer(String item_id, String buyer_id, String offered_price) {
+	public static String acceptOffer(String item_id, String offered_price) {
+		String getBuyerIdQuery = "SELECT buyer_id FROM items WHERE item_id = ?";
 	    String updateItemQuery = "UPDATE items SET item_status = 'Purchased', item_price = ?, item_offer_status = 'Offered' WHERE item_id = ?";
 	    String insertTransactionQuery = "INSERT INTO transaction(transaction_id, user_id, item_id) VALUES(?, ?, ?)";
 	    
-	    PreparedStatement psUpdateItem, psInsertTransaction;
-	    ResultSet rs;
+	    PreparedStatement psBuyerId = db.preparedStatement(getBuyerIdQuery), psUpdateItem, psInsertTransaction;
 	    
 	    try {
-	        // Generate transaction_id
-	        String transactionId = "TS" + UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+	    	psBuyerId.setString(1, item_id);
+	    	ResultSet rs = psBuyerId.executeQuery();
+	        if (rs.next() ) {
+	        	
+	        	// Generate transaction_id
+	        	String buyer_id = rs.getString("buyer_id");
+		        String transactionId = "TS" + UUID.randomUUID().toString().replace("-", "").substring(0, 6);
 
-	        // Update item status to Purchased and set new price
-	        psUpdateItem = db.preparedStatement(updateItemQuery);
-	        psUpdateItem.setString(1, offered_price);
-	        psUpdateItem.setString(2, item_id);
-	        psUpdateItem.executeUpdate();
+		        // Update item status to Purchased and set new price
+		        psUpdateItem = db.preparedStatement(updateItemQuery);
+		        psUpdateItem.setString(1, offered_price);
+		        psUpdateItem.setString(2, item_id);
+		        psUpdateItem.executeUpdate();
 
-	        // Insert the transaction
-	        psInsertTransaction = db.preparedStatement(insertTransactionQuery);
-	        psInsertTransaction.setString(1, transactionId);
-	        psInsertTransaction.setString(2, buyer_id);
-	        psInsertTransaction.setString(3, item_id);
-	        psInsertTransaction.executeUpdate();
+		        // Insert the transaction
+		        psInsertTransaction = db.preparedStatement(insertTransactionQuery);
+		        psInsertTransaction.setString(1, transactionId);
+		        psInsertTransaction.setString(2, buyer_id);
+		        psInsertTransaction.setString(3, item_id);
+		        psInsertTransaction.executeUpdate();
 
-	        return "Offer accepted, transaction created.";
+		        return "Offer accepted, transaction created.";
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
@@ -402,9 +410,9 @@ public class Item {
 	    return "Failed to decline offer.";
 	}
 	
-	public static int makeOffer(String item_id, String new_offer_price) {
+	public static int makeOffer(String item_id, String buyer_id, String new_offer_price) {
 	    String queryCheck = "SELECT offered_price FROM items WHERE item_id = ?";
-	    String queryUpdate = "UPDATE items SET offered_price = ?, item_offer_status = 'Pending' WHERE item_id = ?";
+	    String queryUpdate = "UPDATE items SET offered_price = ?, item_offer_status = 'Pending', buyer_id = ? WHERE item_id = ?";
 	    PreparedStatement psCheck, psUpdate;
 	    ResultSet rs;
 
@@ -426,7 +434,8 @@ public class Item {
 	            // Update the item with the new offer price
 	            psUpdate = db.preparedStatement(queryUpdate);
 	            psUpdate.setInt(1, newOffer);
-	            psUpdate.setString(2, item_id);
+	            psUpdate.setString(2, buyer_id);
+	            psUpdate.setString(3, item_id);
 	            psUpdate.executeUpdate();
 	            return 1;  // Offer submitted successfully
 	        }
@@ -456,7 +465,8 @@ public class Item {
 	                rs.getString("item_category"),
 	                rs.getString("item_status"),
 	                rs.getString("item_wishlist"),
-	                rs.getString("item_offer_status")
+	                rs.getString("item_offer_status"),
+	                rs.getString("offered_price")
 	            );
 	            item.setOffered_price(rs.getString("offered_price")); // Make sure this is correctly set from the database
 	            items.add(item);

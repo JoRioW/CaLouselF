@@ -46,7 +46,7 @@ public class OfferPriceFormView extends BorderPane {
 	    
 	    errorLbl = new Label();
 	    
-	    offerPriceTF = new TextField();  // TextField for buyer to input offer price
+	    offerPriceTF = new TextField(item.getOffered_price());  // TextField for buyer to input offer price
 
 	    backBtn = new Button("Back");
 	    submitBtn = new Button("Submit");
@@ -92,7 +92,7 @@ public class OfferPriceFormView extends BorderPane {
 		        int newOfferPrice = Integer.parseInt(offerPrice);
 
 		        // Panggil controller untuk memproses tawaran harga
-		        String result = ItemController.makeOffer(itemId, String.valueOf(newOfferPrice));
+		        String result = ItemController.makeOffer(itemId, user.getUser_id(), String.valueOf(newOfferPrice));
 		        errorLbl.setText(result);
 
 		        // Jika tawaran berhasil, refresh halaman

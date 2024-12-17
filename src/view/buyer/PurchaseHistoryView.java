@@ -89,6 +89,8 @@ public class PurchaseHistoryView extends BorderPane {
         setLayout();
         setEvents();
         refreshTable();
+        
+        System.out.println(user.getUser_id());
 
         Scene scene = new Scene(this, 600, 600);
         stage.setScene(scene);
