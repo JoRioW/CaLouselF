@@ -1,8 +1,10 @@
 package view.seller;
 
 import controller.ItemController;
+import controller.TransactionController;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

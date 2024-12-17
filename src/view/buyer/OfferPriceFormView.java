@@ -99,7 +99,7 @@ public class OfferPriceFormView extends BorderPane {
             String offerPrice = offerPriceTF.getText();  // Mengambil harga tawaran dari field
 
             // Validasi tawaran harga
-            if (offerPrice.isEmpty()) {
+            if (offerPrice == null) {
                 errorLbl.setText("Offer price cannot be empty.");  // Pesan jika tawaran kosong
                 return;  // Tidak melanjutkan jika kosong
             }

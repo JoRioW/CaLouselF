@@ -3,12 +3,9 @@ package view.admin;
 import controller.ItemController;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -26,7 +23,7 @@ import view.LoginView;
  */
 public class HomeAdminView extends BorderPane {
 
-    // Deklarasi variabel untuk komponen UI
+    // Deklarasi variabel komponen UI
     private Label errorLbl;
     private Button approveItemBtn, declineItemBtn, logoutBtn;
     private TableView<Item> table;
@@ -34,30 +31,33 @@ public class HomeAdminView extends BorderPane {
     private GridPane topGP;
     private TableColumn<Item, String> name, category, size, price;
     private Item selectedItem;
-    private Stage stage;
+    private Stage stage, popUp;
     private User user;
 
     /*
-     * Inisialisasi komponen UI.
-     * Menyiapkan tabel, tombol, dan label untuk UI.
+     * Fungsi init() untuk menginisialisasi komponen UI.
+     * Semua komponen seperti tabel, tombol, label, dan grid dibuat di sini.
      */
     private void init() {
         table = new TableView<>();
-        
         approveItemBtn = new Button("Approve");
         declineItemBtn = new Button("Decline");
         logoutBtn = new Button("Logout");
-        
+
         tableSP = new ScrollPane(table);
         topGP = new GridPane();
-        
+
         errorLbl = new Label();
         errorLbl.setTextFill(Color.RED);
     }
 
     /*
-     * Mengatur layout tabel dengan kolom yang sesuai untuk item yang ditampilkan.
-     * Kolom yang ditampilkan: Nama Item, Kategori Item, Ukuran Item, Harga Item.
+     * Fungsi setTableLayout() untuk mengatur kolom-kolom di dalam tabel.
+     * Kolom yang ditambahkan:
+     * - name: Nama item
+     * - category: Kategori item
+     * - size: Ukuran item
+     * - price: Harga item
      */
     private void setTableLayout() {
         name = new TableColumn<>("Item Name");
@@ -74,7 +74,9 @@ public class HomeAdminView extends BorderPane {
     }
 
     /*
-     * Mengatur layout tampilan dengan menambahkan tombol dan tabel ke grid dan posisi yang sesuai.
+     * Fungsi setLayout() untuk mengatur tata letak komponen UI.
+     * Komponen atas berisi tombol approve, decline, logout, dan label error.
+     * Tabel ditampilkan di bagian tengah dengan ScrollPane.
      */
     private void setLayout() {
         topGP.add(approveItemBtn, 0, 0);
@@ -92,59 +94,94 @@ public class HomeAdminView extends BorderPane {
     }
 
     /*
-     * Menetapkan event handler untuk tombol dan tabel.
+     * Fungsi setEvents() untuk menetapkan event handler pada tombol dan tabel.
      * - approveItemBtn: Menyetujui item yang dipilih.
-     * - declineItemBtn: Menolak item yang dipilih.
-     * - logoutBtn: Melakukan logout dan kembali ke halaman login.
+     * - declineItemBtn: Membuka pop-up untuk memasukkan alasan penolakan.
+     * - logoutBtn: Mengarahkan pengguna ke halaman login.
      */
     private void setEvents() {
-        // Menangani klik pada tabel untuk memilih item
-        table.setOnMouseClicked(e -> {
-            selectedItem = table.getSelectionModel().getSelectedItem();
-        });
+        table.setOnMouseClicked(e -> selectedItem = table.getSelectionModel().getSelectedItem());
 
-        // Menangani aksi tombol approve
         approveItemBtn.setOnAction(e -> {
             if (selectedItem != null) {
                 String id = selectedItem.getItem_id();
                 String message = ItemController.approveItem(id);
 
                 if ("Item approved successfully".equals(message)) {
-                    refreshTable();  // Refresh tabel setelah item disetujui
+                    refreshTable();
                 } else {
-                    errorLbl.setText(message);  // Menampilkan pesan error jika gagal
+                    errorLbl.setText(message);
                 }
             } else {
                 errorLbl.setText("No item selected to approve.");
             }
         });
 
-        // Menangani aksi tombol decline
         declineItemBtn.setOnAction(e -> {
-            if(selectedItem != null) {
-                String id = selectedItem.getItem_id();
-                String message = ItemController.deleteItem(id);
-                
-                if("Success".equals(message)) {
-                    refreshTable();  // Refresh tabel setelah item ditolak
-                }
-                else {
-                    errorLbl.setText(message);  // Menampilkan pesan error jika gagal
-                }
-            }
-            else {
+            if (selectedItem != null) {
+                popUpDeclineAction();
+            } else {
                 errorLbl.setText("No item selected to decline.");
             }
         });
 
-        // Menangani aksi tombol logout
-        logoutBtn.setOnAction(e -> {
-            new LoginView(stage);  // Arahkan ke halaman login
-        });
+        logoutBtn.setOnAction(e -> new LoginView(stage));
     }
 
     /*
-     * Merefresh tabel dengan data terbaru setelah aksi dilakukan (misalnya, item disetujui atau ditolak).
+     * Fungsi popUpDeclineAction() untuk menampilkan pop-up input alasan penolakan.
+     * - Validasi input: Alasan tidak boleh kosong.
+     * - Jika valid, item akan ditolak dan tabel diperbarui.
+     */
+    private void popUpDeclineAction() {
+        popUp = new Stage();
+        popUp.setTitle("Decline Item Reason");
+
+        Label reasonLbl = new Label("Reason for Decline:");
+        TextArea reasonTA = new TextArea();
+        Button submitBtn = new Button("Submit");
+        Button cancelBtn = new Button("Cancel");
+        Label errorLblPopup = new Label();
+        errorLblPopup.setTextFill(Color.RED);
+
+        GridPane popUpGP = new GridPane();
+        popUpGP.setAlignment(Pos.CENTER);
+        popUpGP.setVgap(10);
+        popUpGP.setHgap(10);
+
+        popUpGP.add(reasonLbl, 0, 0);
+        popUpGP.add(reasonTA, 0, 1, 2, 1);
+        popUpGP.add(submitBtn, 0, 2);
+        popUpGP.add(cancelBtn, 1, 2);
+        popUpGP.add(errorLblPopup, 0, 3, 2, 1);
+
+        Scene popUpScene = new Scene(popUpGP, 400, 300);
+        popUp.setScene(popUpScene);
+        popUp.show();
+
+        submitBtn.setOnAction(e -> {
+            String reason = reasonTA.getText().trim();
+
+            if (reason.isEmpty()) {
+                errorLblPopup.setText("Reason cannot be empty.");
+            } else {
+                String response = ItemController.deleteItem(selectedItem.getItem_id());
+                if ("Success".equals(response)) {
+                    errorLbl.setText("Item declined: " + reason);
+                    refreshTable();
+                    popUp.close();
+                } else {
+                    errorLblPopup.setText(response);
+                }
+            }
+        });
+
+        cancelBtn.setOnAction(e -> popUp.close());
+    }
+
+    /*
+     * Fungsi refreshTable() untuk memperbarui data tabel.
+     * Data diambil dari database menggunakan ItemController.
      */
     private void refreshTable() {
         ObservableList<Item> items = ItemController.viewItem(user.getUser_id(), user.getRoles());
@@ -152,8 +189,9 @@ public class HomeAdminView extends BorderPane {
     }
 
     /*
-     * Konstruktor untuk menginisialisasi HomeAdminView.
-     * Menerima objek Stage dan User sebagai parameter untuk pengaturan tampilan.
+     * Konstruktor HomeAdminView(Stage stage, User user)
+     * - Mengatur tampilan admin dengan memanggil fungsi inisialisasi, layout, dan event handler.
+     * - Data tabel dimuat dan ditampilkan.
      */
     public HomeAdminView(Stage stage, User user) {
         this.stage = stage;
@@ -169,4 +207,3 @@ public class HomeAdminView extends BorderPane {
         stage.show();
     }
 }
-

@@ -3,12 +3,14 @@ package view.seller;
 import controller.ItemController;
 import controller.TransactionController;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -25,7 +27,7 @@ public class OfferItemView extends BorderPane {
     private Label errorLbl;  // Label untuk menampilkan pesan error
     private TableView<Item> table;  // Tabel untuk menampilkan item yang memiliki tawaran harga
     private Button acceptBtn, declineBtn, backBtn;  // Tombol untuk menerima tawaran, menolak tawaran, dan kembali ke halaman sebelumnya
-    private Stage stage;  // Stage untuk menampilkan tampilan
+    private Stage stage, popUp;  // Stage untuk menampilkan tampilan
     private User user;  // User yang sedang login (seller)
 
     /*
@@ -122,18 +124,70 @@ public class OfferItemView extends BorderPane {
                 errorLbl.setText("Please select an offer to accept.");  // Pesan error jika tidak ada tawaran yang dipilih
             }
         });
-
+        
         declineBtn.setOnAction(e -> {
             Item selectedItem = table.getSelectionModel().getSelectedItem();  // Mengambil item yang dipilih
             if (selectedItem != null) {
-                String response = ItemController.declineOffer(selectedItem.getItem_id());  // Menolak tawaran yang dipilih
-                errorLbl.setText(response);
-                refreshTable();  // Menyegarkan tabel setelah tawaran ditolak
+                popUpDeclineAction();
             } else {
                 errorLbl.setText("Please select an offer to decline.");  // Pesan error jika tidak ada tawaran yang dipilih
             }
         });
     }
+    
+    private void popUpDeclineAction() {
+        popUp = new Stage();
+        popUp.setTitle("Decline Offer");
+
+        // Membuat komponen untuk pop-up
+        Label reasonLbl = new Label("Reason for Decline:");
+        TextArea reasonTA = new TextArea(); // TextArea untuk input alasan
+        Button submitBtn = new Button("Submit");
+        Button cancelBtn = new Button("Cancel");
+        Label errorLblPopup = new Label();
+        errorLblPopup.setTextFill(Color.RED);
+
+        // Layout pop-up
+        GridPane popUpGP = new GridPane();
+        popUpGP.setAlignment(Pos.CENTER);
+        popUpGP.setVgap(10);
+        popUpGP.setHgap(10);
+
+        popUpGP.add(reasonLbl, 0, 0);
+        popUpGP.add(reasonTA, 0, 1, 2, 1); // TextArea lebar 2 kolom
+        popUpGP.add(submitBtn, 0, 2);
+        popUpGP.add(cancelBtn, 1, 2);
+        popUpGP.add(errorLblPopup, 0, 3, 2, 1);
+
+        // Scene untuk pop-up
+        Scene popUpScene = new Scene(popUpGP, 400, 300);
+        popUp.setScene(popUpScene);
+        popUp.show();
+
+        // Event handler untuk tombol Submit
+        submitBtn.setOnAction(e -> {
+            String reason = reasonTA.getText().trim(); // Ambil teks alasan
+
+            if (reason.isEmpty()) {
+                errorLblPopup.setText("Reason cannot be empty."); // Validasi input kosong
+            } else {
+                Item selectedItem = table.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    // Lakukan proses decline
+                    String response = ItemController.declineOffer(selectedItem.getItem_id());
+                    errorLbl.setText("Offer declined: " + reason); // Menampilkan pesan decline dengan alasan
+                    popUp.close(); // Tutup pop-up
+                    refreshTable(); // Refresh tabel setelah decline
+                } else {
+                    errorLblPopup.setText("No item selected to decline.");
+                }
+            }
+        });
+
+        // Event handler untuk tombol Cancel
+        cancelBtn.setOnAction(e -> popUp.close());
+    }
+
 
     /*
      * Menyegarkan tabel dengan mengambil data item yang memiliki tawaran harga dari pembeli.
